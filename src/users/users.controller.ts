@@ -8,12 +8,11 @@ import {
   Patch,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { Services } from 'src/utils/constants';
 import { UpdateUserDto } from 'src/auth/dto/UpdateUser.dto';
 
 @Controller('users')
 export class UsersController {
-  constructor(@Inject(Services.USERS) private usersService: UsersService) {}
+  constructor(private usersService: UsersService) {}
 
   @Get()
   findAll() {
