@@ -1,32 +1,41 @@
-import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
-import { Routes, Services } from 'src/utils/types';
-import { IAuthService } from './auth';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/CreateUser.dto';
+import { LoginUserDto } from './dto/LoginUser.dto';
+import { AuthService } from './auth.service';
+import { AuthGuard } from './auth.guard';
 
-@Controller(Routes.AUTH)
+@Controller('auth')
 export class AuthController {
-  constructor(
-    @Inject(Services.AUTH) private authService: IAuthService
-  ) { }
+  constructor(private authService: AuthService) {}
 
   @Post('register')
-  registerUser(
-    @Body() createuserdto: CreateUserDto
-  ) {
-    console.log(createuserdto);
-    return '1231'
+  async registerUser(@Body() data: CreateUserDto) {
+    return this.authService.create(data);
   }
 
+  @HttpCode(HttpStatus.OK)
   @Post('login')
-  loginUser() { }
-
-  @Get('status')
-  status() {
-
+  signIn(@Body() signInDto: LoginUserDto) {
+    return this.authService.signIn(signInDto.email, signInDto.password);
   }
 
-  @Post('logout')
-  logout() {
-
+  @UseGuards(AuthGuard)
+  @Get('profile')
+  async getProfile(@Request() req) {
+    return this.authService.getProfile(req.user.sub);
   }
+
+  // @Post('logout')
+  // logout() {
+  //   // return this.authService.getProfile(req.user.sub);
+  // }
 }

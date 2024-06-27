@@ -1,48 +1,41 @@
 import { Injectable } from '@nestjs/common';
 import { UpdateUserDto } from 'src/auth/dto/UpdateUser.dto';
-import { PrismaService } from 'src/prisma.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  clearUsers(users: User[]): User[] {
-    return users.map((user) => {
-      delete user.password;
-
-      return user;
-    }) as unknown as User[];
-  }
-
   async findAll(ids?: string[]): Promise<User[]> {
-    let users: User[];
-
-    if (Array.isArray(ids)) {
-      users = await this.prisma.user.findMany({
-        where: {
+    const filters = Array.isArray(ids)
+      ? {
           id: {
             in: ids,
           },
-        },
-      });
+        }
+      : {};
 
-      return this.clearUsers(users);
-    }
-
-    users = await this.prisma.user.findMany();
-
-    return this.clearUsers(users);
-  }
-
-  validate(ids: string[]): Promise<User[] | null> {
-    return this.prisma.user.findMany({
+    return (await this.prisma.user.findMany({
       where: {
-        id: {
-          in: ids,
-        },
+        ...filters,
       },
-    });
+      select: {
+        id: true,
+        name: true,
+        photoUrl: true,
+        email: true,
+        password: false,
+        firstName: true,
+        lastName: true,
+        lastActive: true,
+        bio: true,
+        chats: true,
+        createdAt: true,
+        updatedAt: true,
+        deletedAt: true,
+      },
+    })) as User[];
   }
 
   async findOne(id: string): Promise<User | null> {
@@ -51,15 +44,20 @@ export class UsersService {
     });
   }
 
+  async findOneWithEmail(email: string): Promise<User | null> {
+    return await this.prisma.user.findUnique({
+      where: { email },
+    });
+  }
+
   update(id: string, updateUserDto: UpdateUserDto) {
-    // let name = '';
-    const newName = `${updateUserDto?.firstName} ${updateUserDto?.lastName}`;
+    // fix user name update
 
     return this.prisma.user.update({
       where: { id },
       data: {
         ...updateUserDto,
-        name: newName,
+        // name: newName,
       },
     });
   }
