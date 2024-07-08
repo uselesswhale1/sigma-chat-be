@@ -3,6 +3,7 @@ name: BE Docker Hub Push
 on:
   workflow_run:
     workflows: ['CI check']
+    branches: [main]
     types: [completed]
 
 jobs:
