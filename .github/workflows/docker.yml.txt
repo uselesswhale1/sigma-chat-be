@@ -7,8 +7,6 @@ on:
     types: [completed]
 
 jobs:
-  my_first_job:
-    name: My first job
   docker:
     needs: build
     name: Docker Build and Push
