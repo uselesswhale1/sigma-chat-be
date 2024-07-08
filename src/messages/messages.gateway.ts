@@ -10,9 +10,9 @@ import { Server, Socket } from 'socket.io';
 import { Message } from '@prisma/client';
 // import { UsersService } from 'src/users/users.service';
 import { ChatsService } from 'src/chats/chats.service';
-import { CLIENT_ENDPOINT } from 'src/utils/constants';
+import { SOCKET_PORT, CLIENT_ENDPOINT } from 'src/utils/constants';
 
-@WebSocketGateway(3002, {
+@WebSocketGateway(SOCKET_PORT, {
   cors: {
     origin: CLIENT_ENDPOINT,
   },

@@ -8,10 +8,12 @@ import {
 import { ChatsService } from './chats.service';
 import { CreateChatDto } from './dto/create-chat.dto';
 import { Server, Socket } from 'socket.io';
-import { UsersService } from 'src/users/users.service';
+// import { UsersService } from 'src/users/users.service';
 import { CLIENT_ENDPOINT } from 'src/utils/constants';
+import { SOCKET_PORT } from 'src/utils/constants';
 
-@WebSocketGateway(3002, { cors: { origin: CLIENT_ENDPOINT } })
+// TODO fix CORS
+@WebSocketGateway(SOCKET_PORT, { cors: { origin: CLIENT_ENDPOINT } })
 export class ChatsGateway {
   @WebSocketServer()
   private server = new Server();
